@@ -1,5 +1,3 @@
-export class CreateCompanyDto {
+export default class {
   name: string;
 }
-
-export default CreateCompanyDto;

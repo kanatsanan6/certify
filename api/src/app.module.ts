@@ -8,10 +8,11 @@ import { CompaniesModule } from './companies/companies.module';
 import { UsersModule } from './users/users.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import appConfig from './config/app.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
+    ConfigModule.forRoot({ isGlobal: true, load: [appConfig, databaseConfig] }),
     TypeOrmModule.forRootAsync({
       useFactory: DataSourceConfiguration,
       inject: [databaseConfig.KEY],
