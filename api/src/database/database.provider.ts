@@ -15,6 +15,7 @@ export const DataSourceConfiguration = (
     database: dbConfig.name,
     migrations: ['dist/database/migrations/*.js'],
     entities: ['dist/**/entities/*.entity.js'],
+    logging: ['query', 'error'],
     synchronize: false,
   };
 };

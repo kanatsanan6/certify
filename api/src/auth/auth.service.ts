@@ -30,9 +30,11 @@ export class AuthService {
         queryRunner,
       );
 
+      await queryRunner.commitTransaction();
       return user;
     } catch (err) {
       await queryRunner.rollbackTransaction();
+
       throw err;
     } finally {
       await queryRunner.release();

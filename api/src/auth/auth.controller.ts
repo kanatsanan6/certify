@@ -15,7 +15,10 @@ export class AuthController {
   @Post()
   async signUp(@Body() payload: signUpDto) {
     try {
-      return await this.authService.signUp(payload);
+      const { encryptedPassword: _, ...result } =
+        await this.authService.signUp(payload);
+
+      return result;
     } catch (err) {
       throw new UnprocessableEntityException(err.detail);
     }
