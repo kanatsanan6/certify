@@ -6,6 +6,8 @@ import databaseConfig from './config/database.config';
 import { DataSourceConfiguration } from './database/database.provider';
 import { CompaniesModule } from './companies/companies.module';
 import { UsersModule } from './users/users.module';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { UsersModule } from './users/users.module';
     }),
     CompaniesModule,
     UsersModule,
+    AuthModule,
   ],
+  providers: [AuthService],
 })
 export class AppModule {}
