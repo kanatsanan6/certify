@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import databaseConfig from './config/database.config';
 import { DataSourceConfiguration } from './database/database.provider';
+import { CompaniesService } from './companies/companies.service';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { DataSourceConfiguration } from './database/database.provider';
       useFactory: DataSourceConfiguration,
       inject: [ConfigService],
     }),
+    CompaniesModule,
   ],
+  providers: [CompaniesService],
 })
 export class AppModule {}
