@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import signInDto from './dto/sign-in.dto';
@@ -14,9 +15,10 @@ export class AuthService {
     private readonly dataSource: DataSource,
     private readonly companiesService: CompaniesService,
     private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(payload: signInDto): Promise<Partial<User>> {
+  async signIn(payload: signInDto): Promise<{ accessToken: string }> {
     const { email, password } = payload;
     const { encryptedPassword, ...result } =
       await this.usersService.findOneByEmail(email);
@@ -25,7 +27,11 @@ export class AuthService {
     if (!matched) {
       throw new UnauthorizedException();
     }
-    return result;
+
+    const jwtPayload = { id: result.id, email: result.email };
+    const accessToken = await this.jwtService.signAsync(jwtPayload);
+
+    return { accessToken };
   }
 
   async signUp(payload: signUpDto): Promise<User> {
