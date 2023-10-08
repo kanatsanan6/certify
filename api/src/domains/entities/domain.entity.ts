@@ -9,9 +9,8 @@ import {
 } from 'typeorm';
 
 export enum DomainStatus {
-  CHECKED = 'checked',
-  UNCHECKED = 'unchecked',
-  EXPIRED = 'expired',
+  VALID = 'valid',
+  INVALID = 'invalid',
 }
 
 @Entity()
@@ -22,7 +21,7 @@ export class Domain {
   @Column({ nullable: false })
   url: string;
 
-  @Column({ type: 'enum', enum: DomainStatus, default: DomainStatus.UNCHECKED })
+  @Column({ type: 'enum', enum: DomainStatus, default: DomainStatus.INVALID })
   status: DomainStatus;
 
   @Column({ type: 'timestamp', nullable: true })
@@ -33,6 +32,9 @@ export class Domain {
 
   @Column({ type: 'varchar', nullable: true })
   issurer: string;
+
+  @Column({ type: 'text', nullable: true })
+  errorMessage: string;
 
   @ManyToOne(() => User, (user) => user.domains)
   user: User;

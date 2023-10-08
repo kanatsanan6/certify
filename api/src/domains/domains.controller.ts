@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 import { DomainsService } from './domains.service';
 import createDomainDto from './dto/create-domain.dto';
@@ -14,9 +21,15 @@ export class DomainsController {
 
   @Post()
   async create(@Body() payload: Omit<createDomainDto, 'user'>, @Req() req) {
-    return await this.domainsService.create({
-      ...payload,
-      user: req.user,
-    });
+    try {
+      return await this.domainsService.create({
+        ...payload,
+        user: req.user,
+      });
+    } catch (err) {
+      console.log('eiei');
+
+      throw new UnprocessableEntityException(err.message);
+    }
   }
 }
