@@ -10,10 +10,15 @@ import { UsersModule } from './users/users.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { DomainsModule } from './domains/domains.module';
+import domainConfig from './config/domain.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [appConfig, databaseConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig, databaseConfig, domainConfig],
+    }),
     TypeOrmModule.forRootAsync({
       useFactory: DataSourceConfiguration,
       inject: [databaseConfig.KEY],
@@ -22,6 +27,7 @@ import { JwtModule } from '@nestjs/jwt';
     UsersModule,
     AuthModule,
     JwtModule,
+    DomainsModule,
   ],
   providers: [AuthService],
 })
