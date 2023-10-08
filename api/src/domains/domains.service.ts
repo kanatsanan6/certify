@@ -26,15 +26,25 @@ export class DomainsService {
     return await this.domainsRepository.findOneBy({ id });
   }
 
-  async create(domain: createDomainDto) {
+  async create(domain: createDomainDto): Promise<Domain> {
     try {
-      const parsedUrl = new URL(domain.url);
-      const host = parsedUrl.hostname;
-      const newDomain = this.domainsRepository.create({
-        ...domain,
-        lastCheckedAt: new Date(),
-      });
+      const newDomain = this.domainsRepository.create(domain);
+      return await this.updateCert(newDomain);
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  }
 
+  async checkCert(id: number): Promise<Domain> {
+    const domain = await this.domainsRepository.findOne({ where: { id } });
+    return await this.updateCert(domain);
+  }
+
+  async updateCert(domain: Domain): Promise<Domain> {
+    const parsedUrl = new URL(domain.url);
+    const host = parsedUrl.hostname;
+
+    try {
       await new Promise<void>((resolve, reject) => {
         const socket = tls.connect(
           {
@@ -45,9 +55,11 @@ export class DomainsService {
           () => {
             try {
               const certificate = socket.getPeerCertificate();
-              newDomain.expiresAt = new Date(certificate.valid_to);
-              newDomain.status = DomainStatus.VALID;
-              newDomain.issurer = certificate.issuer.O;
+              domain.expiresAt = new Date(certificate.valid_to);
+              domain.status = DomainStatus.VALID;
+              domain.issurer = certificate.issuer.O;
+              domain.lastCheckedAt = new Date();
+
               resolve();
             } catch (err) {
               reject(err);
@@ -56,8 +68,9 @@ export class DomainsService {
         );
 
         socket.on('error', (err) => {
-          newDomain.status = DomainStatus.INVALID;
-          newDomain.errorMessage =
+          domain.status = DomainStatus.INVALID;
+          domain.lastCheckedAt = new Date();
+          domain.errorMessage =
             err.code !== 'ERR_SSL_WRONG_VERSION_NUMBER'
               ? err.message
               : 'some error happens';
@@ -65,7 +78,7 @@ export class DomainsService {
         });
       });
 
-      return await this.domainsRepository.save(newDomain);
+      return await this.domainsRepository.save(domain);
     } catch (err) {
       throw new Error(err.message);
     }

@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
   Req,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -29,5 +31,10 @@ export class DomainsController {
     } catch (err) {
       throw new UnprocessableEntityException(err.message);
     }
+  }
+
+  @Put('/check/:id')
+  async checkCert(@Param('id') id: number) {
+    return this.domainsService.checkCert(id);
   }
 }
