@@ -27,8 +27,6 @@ export class DomainsController {
         user: req.user,
       });
     } catch (err) {
-      console.log('eiei');
-
       throw new UnprocessableEntityException(err.message);
     }
   }

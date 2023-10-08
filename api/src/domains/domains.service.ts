@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as tls from 'tls';
+import * as http from 'http';
 
 import { Domain, DomainStatus } from './entities/domain.entity';
 import createDomainDto from './dto/create-domain.dto';
@@ -27,7 +28,8 @@ export class DomainsService {
 
   async create(domain: createDomainDto) {
     try {
-      const host = domain.url;
+      const parsedUrl = new URL(domain.url);
+      const host = parsedUrl.hostname;
       const newDomain = this.domainsRepository.create({
         ...domain,
         lastCheckedAt: new Date(),
@@ -55,7 +57,10 @@ export class DomainsService {
 
         socket.on('error', (err) => {
           newDomain.status = DomainStatus.INVALID;
-          newDomain.errorMessage = err.message;
+          newDomain.errorMessage =
+            err.code !== 'ERR_SSL_WRONG_VERSION_NUMBER'
+              ? err.message
+              : 'some error happens';
           resolve();
         });
       });
