@@ -1,9 +1,11 @@
 import { Company } from '../../companies/entities/company.entity';
+import { Domain } from '../../domains/entities/domain.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,16 +24,19 @@ export class User {
   @ManyToOne(() => Company, (company) => company.users)
   company: Company;
 
+  @OneToMany(() => Domain, (domain) => domain.user)
+  domains: Domain[];
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  public createdAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
-  public updatedAt: Date;
+  updatedAt: Date;
 }
