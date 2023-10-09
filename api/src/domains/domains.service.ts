@@ -1,21 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as tls from 'tls';
-import * as http from 'http';
 
 import { Domain, DomainStatus } from './entities/domain.entity';
 import createDomainDto from './dto/create-domain.dto';
-import domainConfig from 'src/config/domain.config';
-import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class DomainsService {
   constructor(
     @InjectRepository(Domain)
     private readonly domainsRepository: Repository<Domain>,
-    @Inject(domainConfig.KEY)
-    private readonly config: ConfigType<typeof domainConfig>,
   ) {}
 
   async findAll(): Promise<Domain[]> {
@@ -37,6 +32,10 @@ export class DomainsService {
 
   async checkCert(id: number): Promise<Domain> {
     const domain = await this.domainsRepository.findOne({ where: { id } });
+    if (!domain) {
+      throw new NotFoundException('domain not found');
+    }
+
     return await this.updateCert(domain);
   }
 

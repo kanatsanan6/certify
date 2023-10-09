@@ -2,16 +2,20 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
   Req,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 
 import { DomainsService } from './domains.service';
 import createDomainDto from './dto/create-domain.dto';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('domain')
 export class DomainsController {
   constructor(private readonly domainsService: DomainsService) {}
@@ -35,6 +39,10 @@ export class DomainsController {
 
   @Put('/check/:id')
   async checkCert(@Param('id') id: number) {
-    return this.domainsService.checkCert(id);
+    try {
+      return this.domainsService.checkCert(id);
+    } catch (err) {
+      throw new UnprocessableEntityException(err.message);
+    }
   }
 }
