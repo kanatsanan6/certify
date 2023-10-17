@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -8,6 +8,7 @@ import signUpDto from './dto/sign-up.dto';
 import { CompaniesService } from 'src/companies/companies.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { dbTransactionWrap } from 'src/helper/database.helper';
 
 @Injectable()
 export class AuthService {
@@ -35,30 +36,25 @@ export class AuthService {
   }
 
   async signUp(payload: signUpDto): Promise<User> {
-    const queryRunner = this.dataSource.createQueryRunner();
     const { companyName, ...rest } = payload;
-    try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
+    let user: User;
+    await dbTransactionWrap(
+      async (queryRunner: QueryRunner) => {
+        const company = await this.companiesService.create(
+          { name: companyName },
+          queryRunner,
+        );
 
-      const company = await this.companiesService.create(
-        { name: companyName },
-        queryRunner,
-      );
+        user = await this.usersService.create(
+          { ...rest, company: company },
+          queryRunner,
+        );
+      },
+      {
+        dataSource: this.dataSource,
+      },
+    );
 
-      const user = await this.usersService.create(
-        { ...rest, company: company },
-        queryRunner,
-      );
-
-      await queryRunner.commitTransaction();
-      return user;
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-
-      throw err;
-    } finally {
-      await queryRunner.release();
-    }
+    return user;
   }
 }
