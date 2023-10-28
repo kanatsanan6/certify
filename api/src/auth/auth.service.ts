@@ -5,17 +5,19 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { QueryFailedError } from 'typeorm';
 
 import { CompaniesService } from 'src/companies/companies.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { DbTransactionFactory } from 'src/database/transaction.factory';
-import { QueryFailedError } from 'typeorm';
+import { SettingsService } from 'src/companies/settings.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly companiesService: CompaniesService,
+    private readonly settingsService: SettingsService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly transactionRunner: DbTransactionFactory,
@@ -52,6 +54,11 @@ export class AuthService {
 
       const company = await this.companiesService.create(
         { companyName: companyName },
+        transactionManager,
+      );
+
+      await this.settingsService.create(
+        { notifyBefore: 7 },
         transactionManager,
       );
 
