@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Post,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 
@@ -16,21 +15,16 @@ export class AuthController {
 
   @Post('/sign_in')
   async signIn(@Body() payload: signInDto) {
-    try {
-      return await this.authService.signIn(payload);
-    } catch (err) {
-      throw new UnauthorizedException(err.detail);
-    }
+    return await this.authService.signIn(payload.email, payload.password);
   }
 
   @Post('/sign_up')
   async signUp(@Body() payload: signUpDto) {
-    try {
-      const { encryptedPassword: _, ...result } =
-        await this.authService.signUp(payload);
-      return result;
-    } catch (err) {
-      throw new UnprocessableEntityException(err.detail);
-    }
+    const { encryptedPassword: _, ...result } = await this.authService.signUp(
+      payload.email,
+      payload.password,
+      payload.companyName,
+    );
+    return result;
   }
 }

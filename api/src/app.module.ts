@@ -11,6 +11,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { DomainsModule } from './domains/domains.module';
+import { HelperModule } from './helper/helper.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DomainsModule } from './domains/domains.module';
       useFactory: DataSourceConfiguration,
       inject: [databaseConfig.KEY],
     }),
+    HelperModule,
     CompaniesModule,
     UsersModule,
     AuthModule,

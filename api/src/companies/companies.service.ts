@@ -1,24 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { Company } from './entities/company.entity';
-import { QueryRunner, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
-import CreateCompanyDto from './dto/create-company.dto';
-import { dbTransactionWrap } from 'src/helper/database.helper';
+import { Company } from './entities/company.entity';
 
 @Injectable()
 export class CompaniesService {
-  async create(
-    payload: CreateCompanyDto,
-    queryRunner?: QueryRunner,
-  ): Promise<Company> {
-    let company: Company;
-    await dbTransactionWrap(
-      async (queryRunner: QueryRunner) => {
-        company = await queryRunner.manager.save(Company, { ...payload });
-      },
-      { queryRunner },
-    );
+  constructor(
+    @InjectRepository(Company)
+    private readonly companiesRepository: Repository<Company>,
+  ) {}
 
-    return company;
+  async create(
+    { companyName }: { companyName: string },
+    transactionManager?: EntityManager,
+  ): Promise<Company> {
+    if (transactionManager) {
+      return await transactionManager.save(Company, {
+        name: companyName,
+      });
+    } else {
+      await this.companiesRepository.save({ name: companyName });
+    }
   }
 }
