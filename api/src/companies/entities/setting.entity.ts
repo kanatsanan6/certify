@@ -1,28 +1,20 @@
-import { Company } from '../../companies/entities/company.entity';
-import { Domain } from '../../domains/entities/domain.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Company } from './company.entity';
 
 @Entity()
-export class User {
+export class Setting {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false, unique: true })
-  email: string;
-
   @Column({ nullable: false })
-  encryptedPassword: string;
-
-  @ManyToOne(() => Company, (company) => company.users)
-  company: Company;
+  notifyBefore: number;
 
   @CreateDateColumn({
     type: 'timestamp',

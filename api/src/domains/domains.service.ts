@@ -5,6 +5,7 @@ import * as tls from 'tls';
 
 import { Domain, DomainStatus } from './entities/domain.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Injectable()
 export class DomainsService {
@@ -22,14 +23,14 @@ export class DomainsService {
   }
 
   async create(
-    { url, user }: { url: string; user: User },
+    { url, company }: { url: string; company: Company },
     transactionManager?: EntityManager,
   ): Promise<Domain> {
     try {
       if (transactionManager) {
-        return await transactionManager.save(Domain, { url, user });
+        return await transactionManager.save(Domain, { url, company });
       } else {
-        return this.domainsRepository.create({ url, user });
+        return this.domainsRepository.create({ url, company });
       }
     } catch (err) {
       throw new Error(err.message);

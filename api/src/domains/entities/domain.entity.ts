@@ -1,3 +1,4 @@
+import { Company } from '../../companies/entities/company.entity';
 import { User } from '../../users/entities/user.entity';
 import {
   Column,
@@ -36,8 +37,8 @@ export class Domain {
   @Column({ type: 'text', nullable: true })
   errorMessage: string;
 
-  @ManyToOne(() => User, (user) => user.domains)
-  user: User;
+  @ManyToOne(() => Company, (company) => company.domains)
+  company: Company;
 
   @CreateDateColumn({
     type: 'timestamp',

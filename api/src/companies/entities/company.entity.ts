@@ -1,12 +1,17 @@
 import { User } from '../../users/entities/user.entity';
 import {
+  AfterInsert,
   Column,
   CreateDateColumn,
   Entity,
+  InsertEvent,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Setting } from './setting.entity';
+import { Domain } from '../../domains/entities/domain.entity';
 
 @Entity()
 export class Company {
@@ -18,6 +23,12 @@ export class Company {
 
   @OneToMany(() => User, (user) => user.company)
   users: User[];
+
+  @OneToOne(() => Setting)
+  setting: Setting;
+
+  @OneToMany(() => Domain, (domain) => domain.company)
+  domains: Domain[];
 
   @CreateDateColumn({
     type: 'timestamp',

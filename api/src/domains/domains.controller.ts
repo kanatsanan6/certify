@@ -14,6 +14,7 @@ import { DomainsService } from './domains.service';
 import createDomainDto from './dto/create-domain.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { DbTransactionFactory } from 'src/database/transaction.factory';
+import { User } from 'src/users/entities/user.entity';
 
 @UseGuards(JwtGuard)
 @Controller('domain')
@@ -39,7 +40,7 @@ export class DomainsController {
       const domain = await this.domainsService.create(
         {
           ...payload,
-          user: req.user,
+          company: (req.user as User).company,
         },
         transactionManager,
       );
