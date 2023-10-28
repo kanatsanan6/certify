@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import * as tls from 'tls';
 
 import { Domain, DomainStatus } from './entities/domain.entity';
-import createDomainDto from './dto/create-domain.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class DomainsService {
@@ -21,25 +21,36 @@ export class DomainsService {
     return await this.domainsRepository.findOneBy({ id });
   }
 
-  async create(domain: createDomainDto): Promise<Domain> {
+  async create(
+    { url, user }: { url: string; user: User },
+    transactionManager?: EntityManager,
+  ): Promise<Domain> {
     try {
-      const newDomain = this.domainsRepository.create(domain);
-      return await this.updateCert(newDomain);
+      if (transactionManager) {
+        return await transactionManager.save(Domain, { url, user });
+      } else {
+        return this.domainsRepository.create({ url, user });
+      }
     } catch (err) {
       throw new Error(err.message);
     }
   }
 
-  async checkCert(id: number): Promise<Domain> {
+  async checkCert(
+    id: number,
+    transactionManager?: EntityManager,
+  ): Promise<Domain> {
     const domain = await this.domainsRepository.findOne({ where: { id } });
     if (!domain) {
       throw new NotFoundException('domain not found');
     }
-
-    return await this.updateCert(domain);
+    return await this.updateCert({ domain }, transactionManager);
   }
 
-  async updateCert(domain: Domain): Promise<Domain> {
+  async updateCert(
+    { domain }: { domain: Domain },
+    transactionManager?: EntityManager,
+  ): Promise<Domain> {
     const parsedUrl = new URL(domain.url);
     const host = parsedUrl.hostname;
 
@@ -77,7 +88,11 @@ export class DomainsService {
         });
       });
 
-      return await this.domainsRepository.save(domain);
+      if (transactionManager) {
+        return await transactionManager.save(Domain, domain);
+      } else {
+        return await this.domainsRepository.save(domain);
+      }
     } catch (err) {
       throw new Error(err.message);
     }
