@@ -28,6 +28,6 @@ export const dbTransactionWrap = async (
       await queryRunner.release();
     }
   } else {
-    throw new Error('Please provide at least queryRunner or dataSource');
+    operation();
   }
 };

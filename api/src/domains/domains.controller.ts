@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -14,11 +13,15 @@ import {
 import { DomainsService } from './domains.service';
 import createDomainDto from './dto/create-domain.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { DbTransactionFactory } from 'src/helper/transaction.factory';
 
 @UseGuards(JwtGuard)
 @Controller('domain')
 export class DomainsController {
-  constructor(private readonly domainsService: DomainsService) {}
+  constructor(
+    private readonly domainsService: DomainsService,
+    private readonly transactionRunner: DbTransactionFactory,
+  ) {}
 
   @Get()
   async findAll() {
@@ -27,13 +30,27 @@ export class DomainsController {
 
   @Post()
   async create(@Body() payload: Omit<createDomainDto, 'user'>, @Req() req) {
+    let transactionRunner = null;
+
     try {
-      return await this.domainsService.create({
-        ...payload,
-        user: req.user,
-      });
+      transactionRunner = await this.transactionRunner.createTransaction();
+      await transactionRunner.startTransaction();
+      const transactionManager = transactionRunner.transactionManager;
+      const domain = await this.domainsService.create(
+        {
+          ...payload,
+          user: req.user,
+        },
+        transactionManager,
+      );
+      await this.domainsService.updateCert({ domain }, transactionManager);
+      await transactionRunner.commitTransaction();
+      return domain;
     } catch (err) {
+      if (transactionRunner) await transactionRunner.rollbackTransaction();
       throw new UnprocessableEntityException(err.message);
+    } finally {
+      if (transactionRunner) await transactionRunner.releaseTransaction();
     }
   }
 

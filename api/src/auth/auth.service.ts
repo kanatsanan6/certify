@@ -1,60 +1,71 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import signInDto from './dto/sign-in.dto';
-import signUpDto from './dto/sign-up.dto';
 import { CompaniesService } from 'src/companies/companies.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { dbTransactionWrap } from 'src/helper/database.helper';
+import { DbTransactionFactory } from 'src/helper/transaction.factory';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly dataSource: DataSource,
     private readonly companiesService: CompaniesService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly transactionRunner: DbTransactionFactory,
   ) {}
 
-  async signIn(payload: signInDto): Promise<{ accessToken: string }> {
-    const { email, password } = payload;
-    const { encryptedPassword, ...result } =
-      await this.usersService.findOneByEmail(email);
-    const matched = await bcrypt.compare(password, encryptedPassword);
-
-    if (!matched) {
-      throw new UnauthorizedException();
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<{ accessToken: string }> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Email or Password is incorrect');
     }
 
-    const jwtPayload = { id: result.id, email: result.email };
+    const matched = await bcrypt.compare(password, user.encryptedPassword);
+    if (!matched) {
+      throw new UnauthorizedException('Email or Password is incorrect');
+    }
+
+    const jwtPayload = { id: user.id, email: user.email };
     const accessToken = await this.jwtService.signAsync(jwtPayload);
 
     return { accessToken };
   }
 
-  async signUp(payload: signUpDto): Promise<User> {
-    const { companyName, ...rest } = payload;
+  async signUp(email: string, password: string, companyName: string) {
+    let transactionRunner = null;
     let user: User;
-    await dbTransactionWrap(
-      async (queryRunner: QueryRunner) => {
-        const company = await this.companiesService.create(
-          { name: companyName },
-          queryRunner,
-        );
 
-        user = await this.usersService.create(
-          { ...rest, company: company },
-          queryRunner,
-        );
-      },
-      {
-        dataSource: this.dataSource,
-      },
-    );
+    try {
+      transactionRunner = await this.transactionRunner.createTransaction();
+      await transactionRunner.startTransaction();
+      const transactionManager = transactionRunner.transactionManager;
 
-    return user;
+      const company = await this.companiesService.create(
+        { companyName: companyName },
+        transactionManager,
+      );
+
+      user = await this.usersService.create(
+        { email, password, company },
+        transactionManager,
+      );
+
+      await transactionRunner.commitTransaction();
+      return user;
+    } catch (error) {
+      if (transactionRunner) await transactionRunner.rollbackTransaction();
+      throw new UnprocessableEntityException(error.detail);
+    } finally {
+      if (transactionRunner) await transactionRunner.releaseTransaction();
+    }
   }
 }
