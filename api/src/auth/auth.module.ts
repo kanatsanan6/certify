@@ -9,11 +9,11 @@ import { CompaniesModule } from '../companies/companies.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { HelperModule } from 'src/helper/helper.module';
+import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
   imports: [
-    HelperModule,
+    DatabaseModule,
     CompaniesModule,
     UsersModule,
     PassportModule,

@@ -9,7 +9,8 @@ import * as bcrypt from 'bcrypt';
 import { CompaniesService } from 'src/companies/companies.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { DbTransactionFactory } from 'src/helper/transaction.factory';
+import { DbTransactionFactory } from 'src/database/transaction.factory';
+import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -63,7 +64,8 @@ export class AuthService {
       return user;
     } catch (error) {
       if (transactionRunner) await transactionRunner.rollbackTransaction();
-      throw new UnprocessableEntityException(error.detail);
+      if (error instanceof QueryFailedError) throw error;
+      throw new UnprocessableEntityException(error.message);
     } finally {
       if (transactionRunner) await transactionRunner.releaseTransaction();
     }

@@ -13,7 +13,7 @@ import {
 import { DomainsService } from './domains.service';
 import createDomainDto from './dto/create-domain.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { DbTransactionFactory } from 'src/helper/transaction.factory';
+import { DbTransactionFactory } from 'src/database/transaction.factory';
 
 @UseGuards(JwtGuard)
 @Controller('domain')

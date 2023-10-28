@@ -5,4 +5,4 @@ import { DbTransactionFactory } from './transaction.factory';
   providers: [DbTransactionFactory],
   exports: [DbTransactionFactory],
 })
-export class HelperModule {}
+export class DatabaseModule {}
