@@ -1,9 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import signInDto from './dto/sign-in.dto';
 import signUpDto from './dto/sign-up.dto';
