@@ -1,14 +1,26 @@
+import { useForm } from 'react-hook-form'
+
 import { FormControl } from '@/components'
 
-export const SignInForm = () => {
+import { SignInFormInput } from '../types'
+
+type Props = {
+  onSubmit: (data: SignInFormInput) => void
+}
+
+export const SignInForm = (props: Props) => {
+  const { onSubmit } = props
+  const { register, handleSubmit } = useForm<SignInFormInput>()
+
   return (
-    <form className="space-y-2">
+    <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
       <FormControl label="Email" required>
         <input
           type="email"
           placeholder="example@email.com"
           className="input input-bordered input-md"
           required
+          {...register('email')}
         />
       </FormControl>
 
@@ -18,6 +30,7 @@ export const SignInForm = () => {
           placeholder="••••••••••"
           className="input input-bordered input-md"
           required
+          {...register('password')}
         />
       </FormControl>
 
@@ -37,7 +50,9 @@ export const SignInForm = () => {
         </div>
       </FormControl>
 
-      <button className="btn btn-primary w-full text-white">Login</button>
+      <button className="btn btn-primary w-full text-white" type="submit">
+        Login
+      </button>
     </form>
   )
 }
