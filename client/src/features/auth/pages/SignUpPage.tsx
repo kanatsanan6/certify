@@ -23,7 +23,7 @@ const SignUpPage = () => {
         <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="card flex-shrink-0 w-full max-w-xl">
             <div className="card-body space-y-1">
-              <h2 className="text-2xl font-semibold">Sign In</h2>
+              <h2 className="text-2xl font-semibold">Sign Up</h2>
               <p className=" text-sm">
                 Already join Certify?{' '}
                 <a href={routes.auth.signIn} className="text-primary">
