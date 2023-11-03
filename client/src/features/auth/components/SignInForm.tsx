@@ -40,6 +40,7 @@ export const SignInForm = (props: Props) => {
             <input
               type="checkbox"
               className="checkbox checkbox-primary checkbox-xs rounded-sm"
+              {...register('rememberMe')}
             />
             <p className="text-xs">Remember me</p>
           </div>

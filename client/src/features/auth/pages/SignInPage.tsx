@@ -1,6 +1,8 @@
 'use client'
 
 import { GithubButton, GoogleButton, SignInForm } from '../components'
+
+import routes from '@/routes'
 import { useSignIn } from '../services'
 
 const SignInPage = () => {
@@ -13,7 +15,7 @@ const SignInPage = () => {
           <h2 className="text-2xl font-semibold">Sign In</h2>
           <p className=" text-sm">
             New to Certify?{' '}
-            <a href="#" className="text-primary">
+            <a href={routes.auth.signUp} className="text-primary">
               Create an account
             </a>
           </p>

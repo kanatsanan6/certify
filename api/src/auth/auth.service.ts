@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -7,15 +8,19 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { QueryFailedError } from 'typeorm';
 
+import appConfig from 'src/config/app.config';
 import { CompaniesService } from 'src/companies/companies.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { DbTransactionFactory } from 'src/database/transaction.factory';
 import { SettingsService } from 'src/companies/settings.service';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(appConfig.KEY)
+    private readonly app: ConfigType<typeof appConfig>,
     private readonly companiesService: CompaniesService,
     private readonly settingsService: SettingsService,
     private readonly usersService: UsersService,
@@ -26,6 +31,7 @@ export class AuthService {
   async signIn(
     email: string,
     password: string,
+    rememberMe?: boolean,
   ): Promise<{ accessToken: string }> {
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
@@ -38,7 +44,11 @@ export class AuthService {
     }
 
     const jwtPayload = { id: user.id, email: user.email };
-    const accessToken = await this.jwtService.signAsync(jwtPayload);
+    const accessToken = await this.jwtService.signAsync(jwtPayload, {
+      expiresIn: rememberMe
+        ? this.app.jwtExpiresInRememberMe
+        : this.app.jwtExpiresIn,
+    });
 
     return { accessToken };
   }

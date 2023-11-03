@@ -10,7 +10,11 @@ export class AuthController {
 
   @Post('/sign_in')
   async signIn(@Body() payload: signInDto) {
-    return await this.authService.signIn(payload.email, payload.password);
+    return await this.authService.signIn(
+      payload.email,
+      payload.password,
+      payload.rememberMe,
+    );
   }
 
   @Post('/sign_up')

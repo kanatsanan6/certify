@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export default class {
   @IsEmail()
@@ -7,4 +7,8 @@ export default class {
 
   @IsNotEmpty()
   password: string;
+
+  @IsBoolean()
+  @IsOptional()
+  rememberMe?: boolean;
 }

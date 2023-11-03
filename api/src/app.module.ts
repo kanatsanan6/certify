@@ -30,6 +30,6 @@ import { DatabaseModule } from './database/database.module';
     JwtModule,
     DomainsModule,
   ],
-  providers: [AuthService],
+  providers: [],
 })
 export class AppModule {}

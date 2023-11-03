@@ -5,4 +5,5 @@ export type SignInResponse = {
 export type SignInFormInput = {
   email: string
   password: string
+  rememberMe?: boolean
 }
