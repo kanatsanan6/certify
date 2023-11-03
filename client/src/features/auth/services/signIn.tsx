@@ -1,7 +1,8 @@
 import toast from 'react-hot-toast'
 import { useMutation } from 'react-query'
 
-import { fetch, getErrorMsg } from '@/lib/api'
+import { fetch } from '@/lib/api'
+import { getErrorMsg, setAccessToken } from '@/lib/helpers'
 import { SignInResponse } from '../types'
 
 type Payload = {
@@ -22,6 +23,7 @@ const signIn = async (payload: Payload): Promise<string> => {
 export const useSignIn = () => {
   return useMutation<string, ErrorResponse, Payload>(signIn, {
     onSuccess: (token) => {
+      setAccessToken(token)
       toast.success('Sign in successfully')
     },
     onError: (error) => {

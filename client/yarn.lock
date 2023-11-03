@@ -124,6 +124,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@types/js-cookie@^3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.5.tgz#5eba4033a4f17fb2b29d975892694315194eca33"
+  integrity sha512-dtLshqoiGRDHbHueIT9sjkd2F4tW1qPSX2xKAQK8p1e6pM+Z913GM1shv7dOqqasEMYbC5zEaClJomQe8OtQLA==
+
 "@types/node@^20":
   version "20.8.9"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.9.tgz#646390b4fab269abce59c308fc286dcd818a2b08"
@@ -545,6 +550,11 @@ jiti@^1.19.1:
   version "1.20.0"
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.20.0.tgz#2d823b5852ee8963585c8dd8b7992ffc1ae83b42"
   integrity sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==
+
+js-cookie@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-3.0.5.tgz#0b7e2fd0c01552c58ba86e0841f94dc2557dcdbc"
+  integrity sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==
 
 js-sha3@0.8.0:
   version "0.8.0"
