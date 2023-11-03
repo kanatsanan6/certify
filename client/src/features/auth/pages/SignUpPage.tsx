@@ -5,7 +5,7 @@ import { GithubButton, GoogleButton, SignUpForm } from '../components'
 import { useSignUp } from '../services/signup'
 
 const SignUpPage = () => {
-  const { mutateAsync: signUp } = useSignUp()
+  const { mutateAsync: signUp, isLoading } = useSignUp()
 
   return (
     <div className="hero min-h-screen bg-white">
@@ -30,8 +30,8 @@ const SignUpPage = () => {
                   Sign in to an account
                 </a>
               </p>
-              <SignUpForm onSubmit={signUp} />
-              <div className="divider text-xs text-gray-400 py-3">OR</div>
+              <SignUpForm onSubmit={signUp} isLoading={isLoading} />
+              <div className="divider text-xs text-gray-400 py-4">OR</div>
               <GithubButton action="signup" />
               <GoogleButton action="signup" />
             </div>

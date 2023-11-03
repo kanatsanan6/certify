@@ -1,15 +1,16 @@
 import { useForm } from 'react-hook-form'
 
-import { FormControl } from '@/components'
+import { Button, FormControl } from '@/components'
 
 import { SignInFormInput } from '../types'
 
 type Props = {
   onSubmit: (data: SignInFormInput) => void
+  isLoading: boolean
 }
 
 export const SignInForm = (props: Props) => {
-  const { onSubmit } = props
+  const { onSubmit, isLoading } = props
   const { register, handleSubmit } = useForm<SignInFormInput>()
 
   return (
@@ -51,9 +52,9 @@ export const SignInForm = (props: Props) => {
         </div>
       </FormControl>
 
-      <button className="btn btn-primary w-full text-white" type="submit">
+      <Button type="submit" isLoading={isLoading}>
         Sign In
-      </button>
+      </Button>
     </form>
   )
 }

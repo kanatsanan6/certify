@@ -5,7 +5,7 @@ import routes from '@/routes'
 import { useSignIn } from '../services'
 
 const SignInPage = () => {
-  const { mutateAsync: signIn } = useSignIn()
+  const { mutateAsync: signIn, isLoading } = useSignIn()
 
   return (
     <div className="hero min-h-screen bg-white">
@@ -30,8 +30,8 @@ const SignInPage = () => {
                   Create an account
                 </a>
               </p>
-              <SignInForm onSubmit={signIn} />
-              <div className="divider text-xs text-gray-400 py-3">OR</div>
+              <SignInForm onSubmit={signIn} isLoading={isLoading} />
+              <div className="divider text-xs text-gray-400 py-4">OR</div>
               <GithubButton />
               <GoogleButton />
             </div>

@@ -1,13 +1,14 @@
-import { FormControl } from '@/components'
+import { Button, FormControl } from '@/components'
 import { SignUpFormInput } from '../types'
 import { useForm } from 'react-hook-form'
 
 type Props = {
   onSubmit: (data: SignUpFormInput) => void
+  isLoading: boolean
 }
 
 export const SignUpForm = (props: Props) => {
-  const { onSubmit } = props
+  const { onSubmit, isLoading } = props
   const { register, handleSubmit } = useForm<SignUpFormInput>()
 
   return (
@@ -77,9 +78,9 @@ export const SignUpForm = (props: Props) => {
         </div>
       </FormControl>
 
-      <button className="btn btn-primary w-full text-white" type="submit">
+      <Button type="submit" isLoading={isLoading}>
         Sign Up
-      </button>
+      </Button>
     </form>
   )
 }
