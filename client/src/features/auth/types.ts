@@ -7,3 +7,9 @@ export type SignInFormInput = {
   password: string
   rememberMe?: boolean
 }
+
+export type SignUpFormInput = {
+  email: string
+  password: string
+  companyName: string
+}

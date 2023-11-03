@@ -3,14 +3,9 @@ import { useMutation } from 'react-query'
 
 import { fetch } from '@/lib/api'
 import { getErrorMsg, setAccessToken } from '@/lib/helpers'
-import { SignInResponse } from '../types'
+import { SignInFormInput, SignInResponse } from '../types'
 
-type Payload = {
-  email: string
-  password: string
-}
-
-const signIn = async (payload: Payload): Promise<string> => {
+const signIn = async (payload: SignInFormInput): Promise<string> => {
   const response = await fetch<SignInResponse>({
     path: '/auth/sign_in',
     method: 'POST',
@@ -21,7 +16,7 @@ const signIn = async (payload: Payload): Promise<string> => {
 }
 
 export const useSignIn = () => {
-  return useMutation<string, ErrorResponse, Payload>(signIn, {
+  return useMutation<string, ErrorResponse, SignInFormInput>(signIn, {
     onSuccess: (token) => {
       setAccessToken(token)
       toast.success('Sign in successfully')

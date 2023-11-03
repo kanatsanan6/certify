@@ -1,19 +1,27 @@
+import { FormControl } from '@/components'
+import { SignUpFormInput } from '../types'
 import { useForm } from 'react-hook-form'
 
-import { FormControl } from '@/components'
-
-import { SignInFormInput } from '../types'
-
 type Props = {
-  onSubmit: (data: SignInFormInput) => void
+  onSubmit: (data: SignUpFormInput) => void
 }
 
-export const SignInForm = (props: Props) => {
+export const SignUpForm = (props: Props) => {
   const { onSubmit } = props
-  const { register, handleSubmit } = useForm<SignInFormInput>()
+  const { register, handleSubmit } = useForm<SignUpFormInput>()
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
+      <FormControl label="Company Name" required>
+        <input
+          type="text"
+          placeholder="Enter company name"
+          className="input input-bordered input-md"
+          required
+          {...register('companyName')}
+        />
+      </FormControl>
+
       <FormControl label="Email" required>
         <input
           type="email"
@@ -34,25 +42,18 @@ export const SignInForm = (props: Props) => {
         />
       </FormControl>
 
-      <FormControl>
-        <div className="flex my-1 justify-between items-center w-[100%]">
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              className="checkbox checkbox-primary checkbox-xs rounded-sm"
-              {...register('rememberMe')}
-            />
-            <p className="text-xs">Remember me</p>
-          </div>
-
-          <a className="text-right text-xs" href="#">
-            Forget password?
-          </a>
-        </div>
+      <FormControl label="Confirmation Password" required>
+        <input
+          type="password"
+          placeholder="••••••••••"
+          className="input input-bordered input-md mb-3"
+          required
+          {...register('password')}
+        />
       </FormControl>
 
       <button className="btn btn-primary w-full text-white" type="submit">
-        Sign In
+        Sign Up
       </button>
     </form>
   )

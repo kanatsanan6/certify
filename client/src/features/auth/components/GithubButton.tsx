@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-export const GithubButton = () => {
+type Action = 'signin' | 'signup'
+
+export const GithubButton = ({ action = 'signin' }: { action?: Action }) => {
   const [isHovering, setIsHovered] = useState(false)
   const onMouseEnter = () => setIsHovered(true)
   const onMouseLeave = () => setIsHovered(false)
@@ -18,7 +20,7 @@ export const GithubButton = () => {
         alt="Github Logo"
         className="w-5 h-5 mr-2"
       />
-      Sign in with Github
+      {`${action == 'signin' ? 'Sign in' : 'Sign up'} with Github`}
     </button>
   )
 }
