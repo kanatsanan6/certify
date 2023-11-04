@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 
-import { Button, FormControl } from '@/components'
+import { Button, FormControl, PasswordInput } from '@/components'
 
 import { SignInFormInput } from '../types'
 
@@ -26,8 +26,7 @@ export const SignInForm = (props: Props) => {
       </FormControl>
 
       <FormControl label="Password" required>
-        <input
-          type="password"
+        <PasswordInput
           placeholder="••••••••••"
           className="input input-bordered input-md"
           required

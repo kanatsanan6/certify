@@ -1,4 +1,4 @@
-import { Button, FormControl } from '@/components'
+import { Button, FormControl, PasswordInput } from '@/components'
 import { SignUpFormInput } from '../types'
 import { useForm } from 'react-hook-form'
 
@@ -34,20 +34,16 @@ export const SignUpForm = (props: Props) => {
       </FormControl>
 
       <FormControl label="Password" required>
-        <input
-          type="password"
+        <PasswordInput
           placeholder="••••••••••"
-          className="input input-bordered input-md"
           required
           {...register('password')}
         />
       </FormControl>
 
       <FormControl label="Confirmation Password" required>
-        <input
-          type="password"
+        <PasswordInput
           placeholder="••••••••••"
-          className="input input-bordered input-md"
           required
           {...register('password')}
         />
