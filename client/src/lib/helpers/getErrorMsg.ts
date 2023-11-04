@@ -1,3 +1,11 @@
 export const getErrorMsg = (error: any) => {
-  return error.response?.data?.message
+  const errorMsg = error.response?.data?.message
+
+  if (!!!errorMsg) return
+
+  if (errorMsg instanceof Array) {
+    return errorMsg[0]
+  } else {
+    return errorMsg
+  }
 }

@@ -1,4 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 import signInDto from './dto/sign-in.dto';
 import signUpDto from './dto/sign-up.dto';
@@ -19,6 +24,10 @@ export class AuthController {
 
   @Post('/sign_up')
   async signUp(@Body() payload: signUpDto) {
+    if (payload.password !== payload.passwordConfirmation) {
+      throw new UnprocessableEntityException('Passwords do not match');
+    }
+
     const { encryptedPassword: _, ...result } = await this.authService.signUp(
       payload.email,
       payload.password,

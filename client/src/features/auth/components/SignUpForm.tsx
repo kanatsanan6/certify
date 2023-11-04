@@ -16,7 +16,7 @@ export const SignUpForm = (props: Props) => {
       <FormControl label="Company Name" required>
         <input
           type="text"
-          placeholder="Enter company name"
+          placeholder="Company name"
           className="input input-bordered input-md"
           required
           {...register('companyName')}
@@ -37,7 +37,7 @@ export const SignUpForm = (props: Props) => {
         <PasswordInput
           placeholder="••••••••••"
           required
-          {...register('password')}
+          register={register('password')}
         />
       </FormControl>
 
@@ -45,7 +45,7 @@ export const SignUpForm = (props: Props) => {
         <PasswordInput
           placeholder="••••••••••"
           required
-          {...register('password')}
+          register={register('passwordConfirmation')}
         />
       </FormControl>
 

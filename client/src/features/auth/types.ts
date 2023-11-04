@@ -11,5 +11,6 @@ export type SignInFormInput = {
 export type SignUpFormInput = {
   email: string
   password: string
+  passwordConfirmation: string
   companyName: string
 }
