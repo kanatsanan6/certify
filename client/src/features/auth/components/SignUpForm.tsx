@@ -1,6 +1,13 @@
-import { Button, FormControl, PasswordInput } from '@/components'
-import { SignUpFormInput } from '../types'
+import { useState } from 'react'
+import {
+  Button,
+  FormControl,
+  PasswordComplexity,
+  PasswordInput,
+} from '@/components'
 import { useForm } from 'react-hook-form'
+
+import { SignUpFormInput } from '../types'
 
 type Props = {
   onSubmit: (data: SignUpFormInput) => void
@@ -9,7 +16,9 @@ type Props = {
 
 export const SignUpForm = (props: Props) => {
   const { onSubmit, isLoading } = props
-  const { register, handleSubmit } = useForm<SignUpFormInput>()
+  const { register, handleSubmit, watch } = useForm<SignUpFormInput>()
+  const [focus, setFocus] = useState<boolean>(false)
+  const password = watch('password')
 
   return (
     <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
@@ -34,11 +43,16 @@ export const SignUpForm = (props: Props) => {
       </FormControl>
 
       <FormControl label="Password" required>
-        <PasswordInput
-          placeholder="••••••••••"
-          required
-          register={register('password')}
-        />
+        <PasswordComplexity password={password} focus={focus}>
+          <PasswordInput
+            placeholder="••••••••••"
+            required
+            onFocus={() => setFocus(true)}
+            register={register('password', {
+              onBlur: () => setFocus(false),
+            })}
+          />
+        </PasswordComplexity>
       </FormControl>
 
       <FormControl label="Confirmation Password" required>

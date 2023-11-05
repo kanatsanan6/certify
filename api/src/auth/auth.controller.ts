@@ -28,6 +28,14 @@ export class AuthController {
       throw new UnprocessableEntityException('Passwords do not match');
     }
 
+    if (
+      !payload.password.match(
+        /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,}$/,
+      )
+    ) {
+      throw new UnprocessableEntityException('Password is too weak');
+    }
+
     const { encryptedPassword: _, ...result } = await this.authService.signUp(
       payload.email,
       payload.password,
