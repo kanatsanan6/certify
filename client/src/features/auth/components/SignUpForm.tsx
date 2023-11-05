@@ -8,6 +8,8 @@ import {
 import { useForm } from 'react-hook-form'
 
 import { SignUpFormInput } from '../types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { signUpSchema } from '../schema'
 
 type Props = {
   onSubmit: (data: SignUpFormInput) => void
@@ -16,37 +18,49 @@ type Props = {
 
 export const SignUpForm = (props: Props) => {
   const { onSubmit, isLoading } = props
-  const { register, handleSubmit, watch } = useForm<SignUpFormInput>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<SignUpFormInput>({
+    resolver: zodResolver(signUpSchema),
+  })
   const [focus, setFocus] = useState<boolean>(false)
   const password = watch('password')
 
   return (
     <form className="space-y-1" onSubmit={handleSubmit(onSubmit)}>
-      <FormControl label="Company Name" required>
+      <FormControl
+        label="Company Name"
+        required
+        errorMsg={errors.companyName?.message}
+      >
         <input
           type="text"
           placeholder="Company name"
           className="input input-bordered input-md"
-          required
           {...register('companyName')}
         />
       </FormControl>
 
-      <FormControl label="Email" required>
+      <FormControl label="Email" required errorMsg={errors.email?.message}>
         <input
           type="email"
           placeholder="example@email.com"
           className="input input-bordered input-md"
-          required
           {...register('email')}
         />
       </FormControl>
 
-      <FormControl label="Password" required>
+      <FormControl
+        label="Password"
+        required
+        errorMsg={errors.password?.message}
+      >
         <PasswordComplexity password={password} focus={focus}>
           <PasswordInput
             placeholder="••••••••••"
-            required
             onFocus={() => setFocus(true)}
             register={register('password', {
               onBlur: () => setFocus(false),
@@ -55,10 +69,13 @@ export const SignUpForm = (props: Props) => {
         </PasswordComplexity>
       </FormControl>
 
-      <FormControl label="Confirmation Password" required>
+      <FormControl
+        label="Confirmation Password"
+        required
+        errorMsg={errors.passwordConfirmation?.message}
+      >
         <PasswordInput
           placeholder="••••••••••"
-          required
           register={register('passwordConfirmation')}
         />
       </FormControl>

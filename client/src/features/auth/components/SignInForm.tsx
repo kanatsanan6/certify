@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form'
 import { Button, FormControl, PasswordInput } from '@/components'
 
 import { SignInFormInput } from '../types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { signInSchema } from '../schema'
 
 type Props = {
   onSubmit: (data: SignInFormInput) => void
@@ -11,26 +13,34 @@ type Props = {
 
 export const SignInForm = (props: Props) => {
   const { onSubmit, isLoading } = props
-  const { register, handleSubmit } = useForm<SignInFormInput>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormInput>({
+    resolver: zodResolver(signInSchema),
+  })
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
-      <FormControl label="Email" required>
+      <FormControl label="Email" required errorMsg={errors.email?.message}>
         <input
           type="email"
           placeholder="example@email.com"
           className="input input-bordered input-md"
-          required
           {...register('email')}
         />
       </FormControl>
 
-      <FormControl label="Password" required>
+      <FormControl
+        label="Password"
+        required
+        errorMsg={errors.password?.message}
+      >
         <PasswordInput
           placeholder="••••••••••"
           className="input input-bordered input-md"
-          required
-          {...register('password')}
+          register={register('password')}
         />
       </FormControl>
 

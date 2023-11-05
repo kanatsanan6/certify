@@ -13,19 +13,17 @@ export const FormControl = (props: FormControlProps) => {
   return (
     <div className="form-control">
       {label && (
-        <label className="label">
+        <label className="flex label items-baseline justify-between w-full">
           <span className="label-text">
             {label}
             {required && <span className="text-error"> *</span>}
           </span>
+          {errorMsg && (
+            <p className="text-error text-xs text-right">{errorMsg}</p>
+          )}
         </label>
       )}
       {children}
-      {errorMsg && (
-        <p tabIndex={0} className="mt-1 text-error text-sm">
-          {errorMsg}
-        </p>
-      )}
     </div>
   )
 }

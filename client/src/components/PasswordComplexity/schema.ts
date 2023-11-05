@@ -13,3 +13,7 @@ export const passwordSchema = schema
   .symbols(1)
   .has()
   .digits(1)
+
+export const passwordValidator = (password: string) => {
+  return passwordSchema.validate(password)
+}
